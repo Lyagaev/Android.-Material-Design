@@ -2,7 +2,6 @@ package com.example.androidmaterialdesign.ui.main
 
 import android.content.Intent
 import android.net.Uri
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.view.*
 import android.widget.TextView
@@ -16,10 +15,11 @@ import coil.api.load
 import com.example.androidmaterialdesign.MainActivity
 import com.example.androidmaterialdesign.R
 import com.example.androidmaterialdesign.databinding.MainFragmentBinding
+import com.example.androidmaterialdesign.model.PictureOfTheDayData
+import com.example.androidmaterialdesign.ui.settings.SettingsFragment
 import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
-import java.text.SimpleDateFormat
 import java.util.*
 
 class MainFragment : Fragment() {
@@ -105,7 +105,14 @@ class MainFragment : Fragment() {
                     BottomNavigationDrawerFragment().show(it.supportFragmentManager, "tag")
                 }
             }
-            R.id.app_bar_settings -> activity?.supportFragmentManager?.beginTransaction()?.add(R.id.container, ChipsFragment())?.addToBackStack(null)?.commit()
+            R.id.app_bar_settings -> {
+                activity?.supportFragmentManager?.apply {
+                    beginTransaction()
+                        .add(R.id.container, SettingsFragment.newInstance())
+                        .addToBackStack(null)
+                        .commit()
+                }
+            }
         }
         return super.onOptionsItemSelected(item)
     }

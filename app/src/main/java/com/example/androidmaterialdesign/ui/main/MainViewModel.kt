@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.androidmaterialdesign.BuildConfig
+import com.example.androidmaterialdesign.model.PODServerResponseData
+import com.example.androidmaterialdesign.model.PictureOfTheDayData
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -38,8 +40,8 @@ class MainViewModel(
                 retrofitImpl.getRetrofitImpl().getPictureOfTheDay(dateStr, apiKey).enqueue(object :
                     Callback<PODServerResponseData> {
                     override fun onResponse(
-                        call: Call<PODServerResponseData>,
-                        response: Response<PODServerResponseData>
+                            call: Call<PODServerResponseData>,
+                            response: Response<PODServerResponseData>
                     ) {
                         if (response.isSuccessful && response.body() != null) {
                             liveDataForViewToObserve.value =
