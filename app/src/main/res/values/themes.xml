@@ -17,4 +17,19 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+
+    <style name="Theme.AndroidMaterialDesign.MyTheme">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/colorPrimaryMars</item>
+        <item name="colorPrimaryVariant">@color/colorPrimaryVariantMars</item>
+        <item name="colorOnPrimary">@color/colorOnPrimaryMars</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/colorSecondaryMars</item>
+        <item name="colorSecondaryVariant">@color/colorSecondaryVariantMars</item>
+        <item name="colorOnSecondary">@color/colorOnSecondaryMars</item>
+
+        <item name="android:statusBarColor">@color/colorPrimaryVariantMars</item>
+        <item name="colorSecondaryAlpha40">@color/colorSecondaryMarsAlpha40</item>
+    </style>
+
 </resources>

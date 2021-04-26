@@ -5,7 +5,7 @@
     <string name="search_wiki">Найти в Википедии</string>
     <string name="wiki_helper_text">Поищите термин в википедии</string>
     <string name="favourite">favourite</string>
-    <string name="settings">settings</string>
+    <string name="settings">Настройки</string>
     <string name="search">Search</string>
 
     <!-- TODO: Remove or change this placeholder text -->
@@ -13,4 +13,5 @@
     <string name="Today">Сегодня</string>
     <string name="Yesterday">Вчера</string>
     <string name="Day_before_yesterday">Позавчера</string>
+    <string name="select_themes_application">Выбирите тему приложения</string>
 </resources>

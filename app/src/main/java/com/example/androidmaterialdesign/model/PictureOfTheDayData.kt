@@ -1,4 +1,4 @@
-package com.example.androidmaterialdesign.ui.main
+package com.example.androidmaterialdesign.model
 
 sealed class PictureOfTheDayData {
     data class Success(val serverResponseData: PODServerResponseData) : PictureOfTheDayData()

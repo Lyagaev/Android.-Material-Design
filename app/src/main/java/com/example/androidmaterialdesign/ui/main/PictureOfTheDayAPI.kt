@@ -1,5 +1,6 @@
 package com.example.androidmaterialdesign.ui.main
 
+import com.example.androidmaterialdesign.model.PODServerResponseData
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
