@@ -19,8 +19,8 @@ class MainViewModel(
     ) :
         ViewModel() {
 
-        fun getData(dateStr: String): LiveData<PictureOfTheDayData> {
-            sendServerRequest(dateStr)
+        fun getData(startDateStr: String, endDateStr: String): LiveData<PictureOfTheDayData> {
+            sendServerRequest(startDateStr, endDateStr)
             return liveDataForViewToObserve
         }
 
@@ -31,17 +31,17 @@ class MainViewModel(
             return sdf.format(calendar.time)
         }
 
-        private fun sendServerRequest(dateStr: String) {
+        private fun sendServerRequest(startDateStr: String, endDateStr: String) {
             liveDataForViewToObserve.value = PictureOfTheDayData.Loading(null)
             val apiKey: String = BuildConfig.NASA_API_KEY
             if (apiKey.isBlank()) {
                 PictureOfTheDayData.Error(Throwable("Пустой ключ API"))
             } else {
-                retrofitImpl.getRetrofitImpl().getPictureOfTheDay(dateStr, apiKey).enqueue(object :
-                    Callback<PODServerResponseData> {
+                retrofitImpl.getRetrofitImpl().getPictureOfTheDay(startDateStr, endDateStr, apiKey).enqueue(object :
+                    Callback<List<PODServerResponseData>> {
                     override fun onResponse(
-                            call: Call<PODServerResponseData>,
-                            response: Response<PODServerResponseData>
+                            call: Call<List<PODServerResponseData>>,
+                            response: Response<List<PODServerResponseData>>
                     ) {
                         if (response.isSuccessful && response.body() != null) {
                             liveDataForViewToObserve.value =
@@ -58,7 +58,7 @@ class MainViewModel(
                         }
                     }
 
-                    override fun onFailure(call: Call<PODServerResponseData>, t: Throwable) {
+                    override fun onFailure(call: Call<List<PODServerResponseData>>, t: Throwable) {
                         liveDataForViewToObserve.value = PictureOfTheDayData.Error(t)
                     }
                 })

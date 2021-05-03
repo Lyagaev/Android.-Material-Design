@@ -6,21 +6,25 @@ import android.os.Bundle
 import android.view.*
 import android.widget.TextView
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import coil.api.load
+import androidx.viewpager.widget.ViewPager
 import com.example.androidmaterialdesign.MainActivity
 import com.example.androidmaterialdesign.R
 import com.example.androidmaterialdesign.databinding.MainFragmentBinding
+import com.example.androidmaterialdesign.model.PODServerResponseData
 import com.example.androidmaterialdesign.model.PictureOfTheDayData
+import com.example.androidmaterialdesign.ui.main.pictureFragments.PictureFragment
+import com.example.androidmaterialdesign.ui.main.pictureFragments.ViewPagerAdapter
 import com.example.androidmaterialdesign.ui.settings.SettingsFragment
 import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
 import java.util.*
+
 
 class MainFragment : Fragment() {
 
@@ -33,9 +37,12 @@ class MainFragment : Fragment() {
     private lateinit var bottomSheetBehaviorText: TextView
     private lateinit var bottomSheetBehaviorTitle: TextView
 
+    private lateinit var serverResponseData: List<PODServerResponseData>
+    private var idxList: Int=0
+
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View {
         binding = MainFragmentBinding.inflate(inflater, container, false)
         return binding.root
@@ -45,41 +52,27 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setBottomSheetBehavior(view)
         setBottomAppBar(view)
-        setTextChip()
+        //setTextChip()
         binding.inputLayout.setEndIconOnClickListener {
             startActivity(Intent(Intent.ACTION_VIEW).apply {
                 data = Uri.parse("https://en.wikipedia.org/wiki/${binding.inputEditText.text.toString()}")
             })
         }
-        binding.chipGroup.setOnCheckedChangeListener { chipGroup, position ->
-            chipGroup.findViewById<Chip>(position)?.let {
-                viewModel.getData(it.text as String)
-            }
-        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel.getData(viewModel.getDaysAgo(0))
+        viewModel.getData(viewModel.getDaysAgo(-2), viewModel.getDaysAgo(0))
             .observe(this@MainFragment, Observer<PictureOfTheDayData> { renderData(it) })
     }
 
     private fun renderData(data: PictureOfTheDayData) {
         when (data) {
             is PictureOfTheDayData.Success -> {
-                val serverResponseData = data.serverResponseData
-                val url = serverResponseData.url
-                if (url.isNullOrEmpty()) {
-                    toast("ссылка пустая")
-                } else {
-                   //showSuccess()
-                   binding.imageView.load(url) {
-                       lifecycle(this@MainFragment)
-                       error(R.drawable.ic_load_error_vector)
-                       placeholder(R.drawable.ic_no_photo_vector)
-                   }
-                    bottomSheetBehaviorText.text = serverResponseData.explanation
-                    bottomSheetBehaviorTitle.text = serverResponseData.title
+                serverResponseData = data.serverResponseData
+
+                if (serverResponseData.size > idxList) {
+                    setViewPager()
                 }
             }
             is PictureOfTheDayData.Loading -> {
@@ -98,8 +91,8 @@ class MainFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.app_bar_fav ->  toast("Favourite")
-            R.id.app_bar_search ->  toast("Search")
+            R.id.app_bar_fav -> toast("Favourite")
+            R.id.app_bar_search -> toast("Search")
             android.R.id.home -> {
                 activity?.let {
                     BottomNavigationDrawerFragment().show(it.supportFragmentManager, "tag")
@@ -108,9 +101,9 @@ class MainFragment : Fragment() {
             R.id.app_bar_settings -> {
                 activity?.supportFragmentManager?.apply {
                     beginTransaction()
-                        .add(R.id.container, SettingsFragment.newInstance())
-                        .addToBackStack(null)
-                        .commit()
+                            .add(R.id.container, SettingsFragment.newInstance())
+                            .addToBackStack(null)
+                            .commit()
                 }
             }
         }
@@ -149,17 +142,41 @@ class MainFragment : Fragment() {
         bottomSheetBehaviorTitle = view.findViewById(R.id.bottom_sheet_description_header)
     }
 
-    private fun setTextChip(){
-        binding.chipToday.text = viewModel.getDaysAgo(0)
-        binding.chipYesterday.text = viewModel.getDaysAgo(-1)
-        binding.chipDayBeforeYesterday.text = viewModel.getDaysAgo(-2)
-    }
-
     private fun Fragment.toast(string: String?) {
         Toast.makeText(context, string, Toast.LENGTH_SHORT).apply {
             setGravity(Gravity.BOTTOM, 0, 250)
             show()
         }
+    }
+
+    private fun setViewPager(){
+        val fragmentList: MutableList<Fragment> = mutableListOf()
+        //хаполняем список фрагментов передав в него обьект
+        serverResponseData.forEach{
+            val fragment = PictureFragment.newInstance(it.url)
+            fragmentList.add(fragment)
+        }
+        //переворачиваем список что бы 1 элемент был сегодняшний день
+        fragmentList.reverse()
+        //Добавляем адаптер
+        binding.viewPager.adapter = ViewPagerAdapter(childFragmentManager, fragmentList)
+        binding.tabLayout.setupWithViewPager(binding.viewPager)
+
+        //Определяем первональную позицию
+        binding.viewPager.currentItem = idxList
+        //Добавлчям листенер на свайп ViewPager
+        binding.viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageSelected(position: Int) {
+                idxList = position
+                bottomSheetBehaviorText.text = serverResponseData[idxList].explanation
+                bottomSheetBehaviorTitle.text = serverResponseData[idxList].title
+            }
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
+            override fun onPageScrollStateChanged(state: Int) {}
+        })
+
+        bottomSheetBehaviorText.text = serverResponseData[idxList].explanation
+        bottomSheetBehaviorTitle.text = serverResponseData[idxList].title
     }
 
     companion object {
