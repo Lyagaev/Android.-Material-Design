@@ -23,7 +23,7 @@ class SettingsFragment : Fragment() {
     }
 
     private val DEFAULT = R.style.Theme_AndroidMaterialDesign
-    private val MY_THEME = R.style.MyTheme
+    private val MY_THEME = R.style.Theme_AndroidMaterialDesign_MyTheme
 
     private var theme: Int=0
     private lateinit var binding: SettingsFragmentBinding

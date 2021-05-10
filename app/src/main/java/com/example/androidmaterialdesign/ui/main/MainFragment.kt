@@ -50,9 +50,7 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setBottomSheetBehavior(view)
-        setBottomAppBar(view)
-        //setTextChip()
+       // setBottomSheetBehavior(view)
         binding.inputLayout.setEndIconOnClickListener {
             startActivity(Intent(Intent.ACTION_VIEW).apply {
                 data = Uri.parse("https://en.wikipedia.org/wiki/${binding.inputEditText.text.toString()}")
@@ -84,55 +82,6 @@ class MainFragment : Fragment() {
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.menu_bottom_bar, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.app_bar_fav -> toast("Favourite")
-            R.id.app_bar_search -> toast("Search")
-            android.R.id.home -> {
-                activity?.let {
-                    BottomNavigationDrawerFragment().show(it.supportFragmentManager, "tag")
-                }
-            }
-            R.id.app_bar_settings -> {
-                activity?.supportFragmentManager?.apply {
-                    beginTransaction()
-                            .add(R.id.container, SettingsFragment.newInstance())
-                            .addToBackStack(null)
-                            .commit()
-                }
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
-    private fun setBottomAppBar(view: View) {
-        val context = activity as MainActivity
-        context.setSupportActionBar(view.findViewById(R.id.bottom_app_bar))
-        setHasOptionsMenu(true)
-
-        binding.fab.setOnClickListener {
-            if (isMain) {
-                isMain = false
-                binding.bottomAppBar.navigationIcon = null
-                binding.bottomAppBar.fabAlignmentMode = BottomAppBar.FAB_ALIGNMENT_MODE_END
-                binding.fab.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_back_fab))
-                binding.bottomAppBar.replaceMenu(R.menu.menu_bottom_bar_other_screen)
-            } else {
-                isMain = true
-                binding.bottomAppBar.navigationIcon =
-                        ContextCompat.getDrawable(context, R.drawable.ic_hamburger_menu_bottom_bar)
-                binding.bottomAppBar.fabAlignmentMode = BottomAppBar.FAB_ALIGNMENT_MODE_CENTER
-                binding.fab.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_plus_fab))
-                binding.bottomAppBar.replaceMenu(R.menu.menu_bottom_bar)
-            }
-        }
-    }
-
     private fun setBottomSheetBehavior(view: View) {
         val bottomSheet: ConstraintLayout = view.findViewById(R.id.bottom_sheet_container)
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
@@ -153,7 +102,7 @@ class MainFragment : Fragment() {
         val fragmentList: MutableList<Fragment> = mutableListOf()
         //хаполняем список фрагментов передав в него обьект
         serverResponseData.forEach{
-            val fragment = PictureFragment.newInstance(it.url)
+            val fragment = PictureFragment.newInstance(it)
             fragmentList.add(fragment)
         }
         //переворачиваем список что бы 1 элемент был сегодняшний день
@@ -168,15 +117,10 @@ class MainFragment : Fragment() {
         binding.viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageSelected(position: Int) {
                 idxList = position
-                bottomSheetBehaviorText.text = serverResponseData[idxList].explanation
-                bottomSheetBehaviorTitle.text = serverResponseData[idxList].title
             }
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
             override fun onPageScrollStateChanged(state: Int) {}
         })
-
-        bottomSheetBehaviorText.text = serverResponseData[idxList].explanation
-        bottomSheetBehaviorTitle.text = serverResponseData[idxList].title
     }
 
     companion object {
