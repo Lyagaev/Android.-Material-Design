@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat
 import com.example.androidmaterialdesign.databinding.MainActivityBinding
 import com.example.androidmaterialdesign.ui.main.BottomNavigationDrawerFragment
 import com.example.androidmaterialdesign.ui.main.MainFragment
+import com.example.androidmaterialdesign.ui.notes.NotesFragment
 import com.example.androidmaterialdesign.ui.settings.SettingsFragment
 import com.example.androidmaterialdesign.util.getAppTheme
 import com.google.android.material.bottomappbar.BottomAppBar
@@ -52,7 +53,15 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
-            R.id.app_bar_fav -> Toast.makeText(this, "Favorite", Toast.LENGTH_SHORT).show()
+            R.id.app_bar_fav -> {
+                replaceBottomAppBar()
+                supportFragmentManager.apply {
+                    beginTransaction()
+                            .add(R.id.container, NotesFragment.newInstance())
+                            .addToBackStack("NotesFragment")
+                            .commitAllowingStateLoss()
+                }
+            }
             R.id.app_bar_settings -> {
                 replaceBottomAppBar()
                 supportFragmentManager.apply {

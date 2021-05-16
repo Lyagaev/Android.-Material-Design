@@ -16,4 +16,5 @@
     <string name="select_themes_application">Выбирите тему приложения</string>
     <string name="show_description">Показать описание</string>
     <string name="hide_description">Скрыть описание</string>
+    <string name="add">добавить</string>
 </resources>
