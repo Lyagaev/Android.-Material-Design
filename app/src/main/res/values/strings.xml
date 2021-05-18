@@ -17,4 +17,5 @@
     <string name="show_description">Показать описание</string>
     <string name="hide_description">Скрыть описание</string>
     <string name="add">добавить</string>
+    <string name="search_notes">поиск по заметкам</string>
 </resources>
