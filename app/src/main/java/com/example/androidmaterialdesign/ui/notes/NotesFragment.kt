@@ -1,21 +1,19 @@
 package com.example.androidmaterialdesign.ui.notes
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.androidmaterialdesign.R
 import com.example.androidmaterialdesign.databinding.NotesFragmentBinding
-import com.example.androidmaterialdesign.databinding.SettingsFragmentBinding
 import com.example.androidmaterialdesign.model.Notes
 import com.example.androidmaterialdesign.ui.notes.recycler.ItemTouchHelperCallback
 import com.example.androidmaterialdesign.ui.notes.recycler.OnListItemClickListener
 import com.example.androidmaterialdesign.ui.notes.recycler.RecyclerAdapter
-import com.example.androidmaterialdesign.util.getAppTheme
 
 class NotesFragment : Fragment() {
 
@@ -51,7 +49,9 @@ class NotesFragment : Fragment() {
         adapter.setNotes(myList)
         //доделать сохранение заметок в БД
         if (myList.size==0){
-            myList.add(Notes(1,""))
+            myList.add(Notes(1, "Здать домашнее задание"))
+            myList.add(Notes(1, "Завтра съездить за продуктами"))
+            myList.add(Notes(1, "Завтра начать заниматься спортом"))
         }
 
         binding.recyclerNotes.layoutManager = LinearLayoutManager(context)
@@ -66,6 +66,11 @@ class NotesFragment : Fragment() {
                 notifyDataSetChanged()
             }
         }
+
+        binding.inputEditTextSearch.addTextChangedListener{
+            adapter.filter.filter(binding.inputEditTextSearch.text)
+        }
+
     }
 
 }
